@@ -237,9 +237,9 @@ export default function Checkout() {
                   Choose from Existing Address
                 </p>
                 <ul role="list" className="divide-y divide-gray-100">
-                  {addresses.map((address) => (
+                  {addresses.map((address, index) => (
                     <li
-                      key={address.email}
+                      key={index}
                       className="flex justify-between px-5 gap-x-6 py-5 border-solid border-2 border-gray-200"
                     >
                       <div className="flex min-w-0 gap-x-4">
