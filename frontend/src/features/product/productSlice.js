@@ -4,21 +4,30 @@ import {
   fetchAllCategories,
   fetchAllProducts,
   fetchProductByFilters,
+  fetchProductById,
 } from "./productAPI";
 
 const initialState = {
   products: [],
   status: "idle",
   totalItems: 0,
-
   categories: [],
   brands: [],
+  selectedProduct: {},
 };
 
 export const fetchAllProductAsync = createAsyncThunk(
   "product/fetchAllProducts",
   async () => {
     const response = await fetchAllProducts();
+    return response.data;
+  }
+);
+export const fetchProductByIdAsync = createAsyncThunk(
+  "product/fetchProductById",
+  async (id) => {
+    console.log("Slice");
+    const response = await fetchProductById(id);
     return response.data;
   }
 );
@@ -76,9 +85,12 @@ export const productSlice = createSlice({
         state.status = "idle";
         state.brands = action.payload;
       })
-      .addCase(fetchAllCategoriesAsync.fulfilled, (state, action) => {
+      .addCase(fetchProductByIdAsync.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchProductByIdAsync.fulfilled, (state, action) => {
         state.status = "idle";
-        state.categories = action.payload;
+        state.selectedProduct = action.payload;
       });
   },
 });
@@ -89,5 +101,5 @@ export const selectAllProduct = (state) => state.product.products;
 export const selectTotalItems = (state) => state.product.totalItems;
 export const selectCategories = (state) => state.product.categories;
 export const selectBrands = (state) => state.product.brands;
-
+export const selectedProduct = (state) => state.product.selectedProduct;
 export default productSlice.reducer;
