@@ -2339,6 +2339,37 @@
       "email": "atvikf2@gmail.com",
       "password": "Atveek012",
       "id": 1
+    },
+    {
+      "email": "atveek@gamil.com",
+      "password": "Atveek012",
+      "id": 2
+    }
+  ],
+  "cart": [
+    {
+      "id": 7,
+      "title": "Samsung Galaxy Book",
+      "description": "Samsung Galaxy Book S (2020) Laptop With Intel Lakefield Chip, 8GB of RAM Launched",
+      "price": 1499,
+      "discountPercentage": 4.15,
+      "rating": 4.25,
+      "stock": 50,
+      "brand": "Samsung",
+      "category": "laptops",
+      "thumbnail": "https://cdn.dummyjson.com/product-images/7/thumbnail.jpg",
+      "images": [
+        "https://cdn.dummyjson.com/product-images/7/1.jpg",
+        "https://cdn.dummyjson.com/product-images/7/2.jpg",
+        "https://cdn.dummyjson.com/product-images/7/3.jpg",
+        "https://cdn.dummyjson.com/product-images/7/thumbnail.jpg"
+      ],
+      "quantity": 1,
+      "user": {
+        "email": "atvikf2@gmail.com",
+        "password": "Atveek012",
+        "id": 1
+      }
     }
   ]
 }
