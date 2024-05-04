@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCartAsync, selectItems, updateCartAsync } from "./cartSlice";
 import { selectLoggedInUser } from "../auth/authSlice";
@@ -46,7 +46,8 @@ export default function Cart() {
   const totalItems = items.reduce((amount, item) => item.quantity + amount, 0);
 
   const handleQuantity = (e, item) => {
-    dispatch(updateCartAsync({ ...item, quantity: +e.target.value }, user.id));
+    const newItem = { ...item, quantity: +e.target.value };
+    dispatch(updateCartAsync(newItem, user.id));
   };
   const handleDelete = (item) => {
     dispatch(deleteCartAsync(item.id, user.id));
@@ -54,6 +55,8 @@ export default function Cart() {
 
   return (
     <>
+      {items.length === 0 && <Navigate to="/" replace={true}></Navigate>}
+
       <div>
         <div className="mx-auto mt-20 bg-white max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mt-8">
