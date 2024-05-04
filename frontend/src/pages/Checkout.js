@@ -13,7 +13,10 @@ import {
   selectLoggedInUser,
   updateUserAsync,
 } from "../features/auth/authSlice";
-import { createOrderAsync } from "../features/order/orderSlice";
+import {
+  createOrderAsync,
+  selectCurrentOrderStatus,
+} from "../features/order/orderSlice";
 
 export default function Checkout() {
   const [open, setOpen] = useState(true);
@@ -27,6 +30,7 @@ export default function Checkout() {
   } = useForm();
 
   const user = useSelector(selectLoggedInUser);
+  const orderPlaced = useSelector(selectCurrentOrderStatus);
 
   const totalAmount = items.reduce(
     (amount, item) => item.price * item.quantity + amount,
@@ -41,7 +45,7 @@ export default function Checkout() {
     dispatch(updateCartAsync({ ...item, quantity: +e.target.value }, user.id));
   };
   const handleDelete = (item) => {
-    dispatch(deleteCartAsync(item.id, user.id));
+    dispatch(deleteCartAsync(item.id));
   };
 
   const handleAddress = (e) => {
@@ -59,6 +63,7 @@ export default function Checkout() {
       user,
       paymentMethod,
       selectAddress,
+      status: "pending",
     };
     dispatch(createOrderAsync(order));
   };
@@ -66,6 +71,12 @@ export default function Checkout() {
   return (
     <>
       {items.length === 0 && <Navigate to="/" replace={true}></Navigate>}
+      {orderPlaced && (
+        <Navigate
+          to={`/order-success/${orderPlaced.id}`}
+          replace={true}
+        ></Navigate>
+      )}
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-5">

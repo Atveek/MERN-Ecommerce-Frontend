@@ -22,7 +22,7 @@ export function fetchItemByUserId(userId) {
 export function updateCart(update, userId) {
   return new Promise(async (resolve) => {
     const response = await fetch(
-      "http://localhost:8080/cart/" + update.id + "?user.id=" + userId,
+      "http://localhost:8080/cart/" + update.id + "?user=" + userId,
       {
         method: "PATCH",
         body: JSON.stringify(update),
@@ -33,15 +33,25 @@ export function updateCart(update, userId) {
     resolve({ data });
   });
 }
-export function deleteCart(itemId, userId) {
+export function deleteCart(itemId) {
   return new Promise(async (resolve) => {
-    const response = await fetch(
-      "http://localhost:8080/cart/" + itemId + "?user.id=" + userId,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await fetch("http://localhost:8080/cart/" + itemId, {
+      method: "DELETE",
+    });
     const data = await response.json();
     resolve({ data });
   });
+}
+export async function resetCart(userId) {
+  try {
+    const response = await fetchItemByUserId(userId);
+    const items = response.data; // Accessing the data property from the response
+    console.log(items);
+    for (let item of items) {
+      await deleteCart(item.id);
+    }
+    return { status: "success" }; // Returning a promise resolved with success status
+  } catch (error) {
+    return { status: "error", message: error.message }; // Returning a promise resolved with error status and message
+  }
 }
