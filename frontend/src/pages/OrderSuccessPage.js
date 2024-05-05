@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { selectLoggedInUser } from "../features/auth/authSlice";
 import { resetCartAsync } from "../features/cart/cartSlice";
 import { resetOrder } from "../features/order/orderSlice";
+import { selectUserInfo } from "../features/user/userSlice";
 
 export default function OrderSuccessPage() {
   const param = useParams();
-  const user = useSelector(selectLoggedInUser);
+  const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(resetCartAsync(user.id));

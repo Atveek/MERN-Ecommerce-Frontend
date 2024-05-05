@@ -9,14 +9,12 @@ import {
   selectItems,
   updateCartAsync,
 } from "../features/cart/cartSlice";
-import {
-  selectLoggedInUser,
-  updateUserAsync,
-} from "../features/auth/authSlice";
+import { updateUserAsync } from "../features/auth/authSlice";
 import {
   createOrderAsync,
   selectCurrentOrderStatus,
 } from "../features/order/orderSlice";
+import { selectUserInfo } from "../features/user/userSlice";
 
 export default function Checkout() {
   const [open, setOpen] = useState(true);
@@ -29,7 +27,7 @@ export default function Checkout() {
     formState: { errors },
   } = useForm();
 
-  const user = useSelector(selectLoggedInUser);
+  const user = useSelector(selectUserInfo);
   const orderPlaced = useSelector(selectCurrentOrderStatus);
 
   const totalAmount = items.reduce(

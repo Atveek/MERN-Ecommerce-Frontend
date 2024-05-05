@@ -4,15 +4,13 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCartAsync, selectItems, updateCartAsync } from "./cartSlice";
-import { selectLoggedInUser } from "../auth/authSlice";
-
-
+import { selectUserInfo } from "../user/userSlice";
 
 export default function Cart() {
   const [open, setOpen] = useState(true);
   const dispatch = useDispatch();
   const items = useSelector(selectItems);
-  const user = useSelector(selectLoggedInUser);
+  const user = useSelector(selectUserInfo);
   const totalAmount = items.reduce(
     (amount, item) => item.price * item.quantity + amount,
     0
