@@ -24,4 +24,12 @@ export function checkUser(user) {
     reject({ message: "user not found" });
   });
 }
+export function SignOut() {
+  return new Promise(async (resolve, reject) => {
+    // const response = await fetch(`http://localhost:8080/user/${userId}`);
+    // const data = await response.json();
 
+    //TODO:  server we will remove user session info
+    resolve({ data: "success" });
+  });
+}
