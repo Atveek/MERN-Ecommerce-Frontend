@@ -59,3 +59,43 @@ export function fetchProductById(id) {
     resolve({ data });
   });
 }
+
+export function createProduct(product) {
+  return new Promise(async (resolve) => {
+    console.log("Api");
+    const response = await fetch(`http://localhost:8080/products/`, {
+      method: "POST",
+      body: JSON.stringify(product),
+      headers: { "content-type": "application/json" },
+    });
+    const data = await response.json();
+    resolve({ data });
+  });
+}
+export function updateProduct(product) {
+  return new Promise(async (resolve) => {
+    console.log("Api");
+    const response = await fetch(
+      `http://localhost:8080/products/` + product.id,
+      {
+        method: "PATCH",
+        body: JSON.stringify(product),
+        headers: { "content-type": "application/json" },
+      }
+    );
+    const data = await response.json();
+    resolve({ data });
+  });
+}
+export function deleteProduct(productId) {
+  return new Promise(async (resolve) => {
+    console.log("Api");
+    const response = await fetch(
+      `http://localhost:8080/products/` + productId,
+      {
+        method: "DELETE",
+      }
+    );
+    resolve({ success: true });
+  });
+}
