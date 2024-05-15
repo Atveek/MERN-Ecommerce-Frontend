@@ -5,6 +5,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteCartAsync, selectItems, updateCartAsync } from "./cartSlice";
 import { selectUserInfo } from "../user/userSlice";
+import { discountPercentage } from "../../app/constants";
 
 export default function Cart() {
   const [open, setOpen] = useState(true);
@@ -12,7 +13,7 @@ export default function Cart() {
   const items = useSelector(selectItems);
   const user = useSelector(selectUserInfo);
   const totalAmount = items.reduce(
-    (amount, item) => item.price * item.quantity + amount,
+    (amount, item) => discountPercentage(item) * item.quantity + amount,
     0
   );
   const totalItems = items.reduce((amount, item) => item.quantity + amount, 0);
@@ -53,7 +54,7 @@ export default function Cart() {
                           <h3>
                             <a href={product.href}>{product.title}</a>
                           </h3>
-                          <p className="ml-4">${product.price}</p>
+                          <p className="ml-4">${discountPercentage(product)}</p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">
                           {product.brand}

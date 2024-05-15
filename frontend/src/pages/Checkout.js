@@ -15,6 +15,7 @@ import {
   selectCurrentOrderStatus,
 } from "../features/order/orderSlice";
 import { selectUserInfo } from "../features/user/userSlice";
+import { discountPercentage } from "../app/constants";
 
 export default function Checkout() {
   const [open, setOpen] = useState(true);
@@ -31,7 +32,7 @@ export default function Checkout() {
   const orderPlaced = useSelector(selectCurrentOrderStatus);
 
   const totalAmount = items.reduce(
-    (amount, item) => item.price * item.quantity + amount,
+    (amount, item) => discountPercentage(item) * item.quantity + amount,
     0
   );
   const totalItems = items.reduce((amount, item) => item.quantity + amount, 0);
@@ -384,7 +385,9 @@ export default function Checkout() {
                               <h3>
                                 <a href={product.href}>{product.title}</a>
                               </h3>
-                              <p className="ml-4">${product.price}</p>
+                              <p className="ml-4">
+                                ${discountPercentage(product)}
+                              </p>
                             </div>
                             <p className="mt-1 text-sm text-gray-500">
                               {product.brand}
