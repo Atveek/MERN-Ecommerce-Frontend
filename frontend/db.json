@@ -7,7 +7,7 @@
       "price": 549,
       "discountPercentage": 12.96,
       "rating": 4.69,
-      "stock": 94,
+      "stock": 0,
       "brand": "Apple",
       "category": "smartphones",
       "thumbnail": "https://cdn.dummyjson.com/product-images/1/thumbnail.jpg",
@@ -35,7 +35,8 @@
         "https://cdn.dummyjson.com/product-images/2/2.jpg",
         "https://cdn.dummyjson.com/product-images/2/3.jpg",
         "https://cdn.dummyjson.com/product-images/2/thumbnail.jpg"
-      ]
+      ],
+      "deleted": true
     },
     {
       "id": 3,
@@ -2700,7 +2701,6 @@
       "status": "pending",
       "id": 5
     },
-    
     {
       "items": [
         {
@@ -3079,6 +3079,5 @@
       "status": "pending",
       "id": 11
     }
-  
   ]
 }

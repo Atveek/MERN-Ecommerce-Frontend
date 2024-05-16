@@ -4,9 +4,10 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
 import { fetchProductByIdAsync, selectedProduct } from "../productSlice";
 import { useParams } from "react-router-dom";
-import { addToCartAsync } from "../../cart/cartSlice";
+import { addToCartAsync, selectItems } from "../../cart/cartSlice";
 import { selectLoggedInUser } from "../../auth/authSlice";
 import { discountPercentage } from "../../../app/constants";
+import { useAlert } from "react-alert";
 
 const colors = [
   { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
@@ -39,10 +40,12 @@ export default function ProductDetail() {
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [selectedSize, setSelectedSize] = useState(sizes[2]);
   const product = useSelector(selectedProduct);
+  const cart = useSelector(selectItems);
   // const reviews = product.rating;
   const user = useSelector(selectLoggedInUser);
   const dispatch = useDispatch();
   const { id } = useParams();
+  const alert = useAlert();
 
   useEffect(() => {
     console.log(id);
@@ -51,9 +54,19 @@ export default function ProductDetail() {
 
   const handleCart = (e) => {
     e.preventDefault();
-    const newItem = { ...product, quantity: 1, user: user.id };
-    delete newItem["id"];
-    dispatch(addToCartAsync(newItem));
+    const index = cart.findIndex((item) => item.productId === product.id);
+    if (index < 0) {
+      const newItem = {
+        ...product,
+        productId: product.id,
+        quantity: 1,
+        user: user.id,
+      };
+      delete newItem["id"];
+      dispatch(addToCartAsync(newItem));
+    } else {
+      alert.info("Item already added");
+    }
   };
 
   if (!product) {

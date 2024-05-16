@@ -9,10 +9,11 @@ import {
   selectBrands,
   selectCategories,
   selectTotalItems,
+  selectedProductStatus,
 } from "../productSlice";
 import { useSelector, useDispatch } from "react-redux";
 // import { increment } from "./productListSlice";
-
+import { ThreeDots } from "react-loader-spinner";
 import { Dialog, Disclosure, Menu, Transition } from "@headlessui/react";
 import { XMarkIcon, StarIcon } from "@heroicons/react/24/outline";
 import {
@@ -40,6 +41,7 @@ export default function ProductList() {
   const products = useSelector(selectAllProduct);
   const totalItems = useSelector(selectTotalItems);
   const categories = useSelector(selectCategories);
+  const status = useSelector(selectedProductStatus);
   const brands = useSelector(selectBrands);
   const dispatch = useDispatch();
   const filters = [
@@ -203,6 +205,21 @@ export default function ProductList() {
                     handleFilter={handleFilter}
                   ></DesktopFilter>
                   {/* Product grid */}
+                  {status === "loading" ? (
+                    <div className="flex justify-center items-center h-full">
+                      <ThreeDots
+                        visible={true}
+                        height="100"
+                        width="100"
+                        margin
+                        color="#4fa94d"
+                        radius="9"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    </div>
+                  ) : null}
                   <div className="lg:col-span-3">
                     <ProductGrid products={products}></ProductGrid>
                   </div>
@@ -447,6 +464,11 @@ function ProductGrid({ products }) {
                       </p>
                     </div>
                   </div>
+                  {product.stock <= 0 && (
+                    <div>
+                      <p className="text-sm text-red-400">Out of Stock</p>
+                    </div>
+                  )}
                 </div>
               </Link>
             ))}

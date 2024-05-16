@@ -136,6 +136,7 @@ export const productSlice = createSlice({
           (product) => product.id === action.payload.id
         );
         state.products.splice(index, 1, action.payload);
+        state.selectedProduct = action.payload;
       })
       .addCase(deleteProductAsync.pending, (state) => {
         state.status = "loading";
@@ -157,4 +158,6 @@ export const selectTotalItems = (state) => state.product.totalItems;
 export const selectCategories = (state) => state.product.categories;
 export const selectBrands = (state) => state.product.brands;
 export const selectedProduct = (state) => state.product.selectedProduct;
+export const selectedProductStatus = (state) => state.product.status;
+
 export default productSlice.reducer;

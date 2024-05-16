@@ -11,9 +11,8 @@ import { selectItems } from "../cart/cartSlice";
 import { selectLoggedInUser } from "../auth/authSlice";
 
 const navigation = [
-  { name: "Dashboard", link: "#", user: true },
-  { name: "Team", link: "#", user: true },
-  { name: "Admin", link: "/admin", admin: true },
+  { name: "Products", link: "/", user: true },
+  { name: "Products", link: "/admin", admin: true },
   { name: "Orders", link: "/admin/orders", admin: true },
 ];
 const userNavigation = [
@@ -40,8 +39,8 @@ export default function Navbar({ children }) {
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
                       <img
-                        className="h-8 w-8"
-                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                        className="h-8  w-auto"
+                        src="/ekart.png"
                         alt="Your Company"
                       />
                     </div>
@@ -226,7 +225,7 @@ export default function Navbar({ children }) {
         </Disclosure>
 
         <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 text-left">
               E-Commerce
             </h1>
