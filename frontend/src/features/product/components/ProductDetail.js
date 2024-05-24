@@ -57,12 +57,10 @@ export default function ProductDetail() {
     const index = cart.findIndex((item) => item.productId === product.id);
     if (index < 0) {
       const newItem = {
-        ...product,
-        productId: product.id,
+        product: product.id,
         quantity: 1,
         user: user.id,
       };
-      delete newItem["id"];
       dispatch(addToCartAsync(newItem));
     } else {
       alert.info("Item already added");

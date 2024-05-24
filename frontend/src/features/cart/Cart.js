@@ -15,14 +15,17 @@ export default function Cart() {
   const items = useSelector(selectItems);
   const user = useSelector(selectUserInfo);
   const totalAmount = items.reduce(
-    (amount, item) => discountPercentage(item) * item.quantity + amount,
+    (amount, item) => discountPercentage(item.product) * item.quantity + amount,
     0
   );
   const totalItems = items.reduce((amount, item) => item.quantity + amount, 0);
 
   const handleQuantity = (e, item) => {
-    const newItem = { ...item, quantity: +e.target.value };
-    dispatch(updateCartAsync(newItem, user.id));
+    const newItem = {
+      quantity: +e.target.value,
+      _id: item.id,
+    };
+    dispatch(updateCartAsync(newItem));
   };
   const handleDelete = (item) => {
     dispatch(deleteCartAsync(item.id));
@@ -44,7 +47,7 @@ export default function Cart() {
                   <li key={product.id} className="flex py-6">
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                       <img
-                        src={product.thumbnail}
+                        src={product.product.thumbnail}
                         alt={product.title}
                         className="h-full w-full object-cover object-center"
                       />
@@ -54,12 +57,16 @@ export default function Cart() {
                       <div>
                         <div className="flex justify-between text-base font-medium text-gray-900">
                           <h3>
-                            <a href={product.href}>{product.title}</a>
+                            <a href={product.product.href}>
+                              {product.product.title}
+                            </a>
                           </h3>
-                          <p className="ml-4">${discountPercentage(product)}</p>
+                          <p className="ml-4">
+                            ${discountPercentage(product.product)}
+                          </p>
                         </div>
                         <p className="mt-1 text-sm text-gray-500">
-                          {product.brand}
+                          {product.product.brand}
                         </p>
                       </div>
                       <div className="flex flex-1 items-end justify-between text-sm">
@@ -83,7 +90,7 @@ export default function Cart() {
 
                         <div className="flex">
                           <Modal
-                            title={`Delete ${product.title}`}
+                            title={`Delete ${product.product.title}`}
                             message="Are you sure you want to delete this Cart Item"
                             DangerOption="Delete"
                             CancelOption="Cancel"
