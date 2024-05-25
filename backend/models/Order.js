@@ -8,7 +8,7 @@ const orderSchema = new Schema({
   totalAmount: { type: Number },
   paymentMethod: { type: String, required: true },
   status: { type: String },
-  selectedAddress: { type: [Schema.Types.Mixed], required: true },
+  selectedAddress: { type: Schema.Types.Mixed, required: true },
 });
 
 const virtual = orderSchema.virtual("id");

@@ -3,11 +3,8 @@ const { Order } = require("../models/Order");
 
 exports.fetchOrderByUser = async (req, res) => {
   const { user } = req.query;
-  console.log(user);
   try {
-    const cart = await Order.find({ user: user })
-      .populate("user") // Correct field name from schema
-      .populate("product"); // Correct field name from schema
+    const cart = await Order.find({ user: user }); // Correct field name from schema
     console.log(cart);
     res.status(200).json(cart);
   } catch (err) {

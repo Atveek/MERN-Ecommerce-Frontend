@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { positions, Provider } from "react-alert";
+import { positions, Provider as AlertProvider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
 import "./App.css";
 import Home from "./pages/Home";
@@ -163,9 +163,9 @@ function App() {
 
   return (
     <div className="App">
-      <Provider template={AlertTemplate} {...options}>
+      <AlertProvider template={AlertTemplate} {...options}>
         <RouterProvider router={router} />
-      </Provider>
+      </AlertProvider>
     </div>
   );
 }

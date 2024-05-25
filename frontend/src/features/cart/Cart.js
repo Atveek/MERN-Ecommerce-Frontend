@@ -13,7 +13,7 @@ export default function Cart() {
   const [openModal, setOpenModal] = useState(-1);
   const dispatch = useDispatch();
   const items = useSelector(selectItems);
-  const user = useSelector(selectUserInfo);
+  const userInfo = useSelector(selectUserInfo);
   const totalAmount = items.reduce(
     (amount, item) => discountPercentage(item.product) * item.quantity + amount,
     0

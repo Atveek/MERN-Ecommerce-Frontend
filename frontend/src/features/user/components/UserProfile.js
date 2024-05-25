@@ -7,7 +7,7 @@ export default function UserProfile() {
   const dispatch = useDispatch();
   const [showEditForm, setShowEditForm] = useState(-1);
   const [showEditForm1, setShowEditForm1] = useState(false);
-  const user = useSelector(selectUserInfo);
+  const userInfo = useSelector(selectUserInfo);
   const {
     register,
     handleSubmit,
@@ -17,18 +17,18 @@ export default function UserProfile() {
   } = useForm();
 
   const handleDelete = (e, index) => {
-    const newUser = { ...user, addresses: [...user.addresses] };
+    const newUser = { ...userInfo, addresses: [...userInfo.addresses] };
     newUser.addresses.splice(index, 1);
     dispatch(updateUserAsync(newUser));
   };
   const handleEdit = (data, index) => {
-    const newUser = { ...user, addresses: [...user.addresses] };
+    const newUser = { ...userInfo, addresses: [...userInfo.addresses] };
     newUser.addresses.splice(index, 1, data);
     dispatch(updateUserAsync(newUser));
   };
   const handleShowForm = (index) => {
     setShowEditForm(index);
-    const address = user.addresses[index];
+    const address = userInfo.addresses[index];
     setValue("name", address.name);
     setValue("email", address.email);
     setValue("phone", address.phone);
@@ -38,7 +38,7 @@ export default function UserProfile() {
     setValue("pinCode", address.pinCode);
   };
   const handleAddNewAddress = (data) => {
-    const newUser = { ...user, addresses: [...user.addresses, data] };
+    const newUser = { ...userInfo, addresses: [...userInfo.addresses, data] };
     dispatch(updateUserAsync(newUser));
     setShowEditForm1(false);
   };
@@ -49,14 +49,14 @@ export default function UserProfile() {
         <div className="mt-8">
           <div className="flow-root">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 text-left">
-              Name : {user.name ? user.name : "New User"}
+              Name : {userInfo.name ? userInfo.name : "New User"}
             </h1>
             <h3 className="text-xl font-bold tracking-tight text-red-900 text-left pb-5">
-              Email address : {user.email}
+              Email address : {userInfo.email}
             </h3>
-            {user.role === "admin" && (
+            {userInfo.role === "admin" && (
               <h3 className="text-xl font-bold tracking-tight text-red-900 text-left pb-5">
-                User Role : {user.role}
+                User Role : {userInfo.role}
               </h3>
             )}
           </div>
@@ -240,9 +240,9 @@ export default function UserProfile() {
             </form>
           )}
           <p className="mt-0.5 text-sm text-gray-500">Your Address: </p>
-          {user.addresses.map((address, index) => {
+          {userInfo.addresses.map((address, index) => {
             return (
-              <div>
+              <div key={index}>
                 {showEditForm === index && (
                   <form
                     noValidate

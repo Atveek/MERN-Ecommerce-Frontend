@@ -7,12 +7,12 @@ import { selectUserInfo } from "../features/user/userSlice";
 
 export default function OrderSuccessPage() {
   const param = useParams();
-  const user = useSelector(selectUserInfo);
+  const userInfo = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(resetCartAsync(user.id));
+    dispatch(resetCartAsync(userInfo.id));
     dispatch(resetOrder());
-  }, [dispatch, user.id]);
+  }, [dispatch, userInfo.id]);
   return (
     <>
       {!param.id && <Navigate to="/" replace={true}></Navigate>}

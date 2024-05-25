@@ -9,7 +9,7 @@ import {
   selectItems,
   updateCartAsync,
 } from "../features/cart/cartSlice";
-import { updateUserAsync } from "../features/auth/authSlice";
+import { updateUserAsync } from "../features/user/userSlice";
 import {
   createOrderAsync,
   selectCurrentOrderStatus,
@@ -28,7 +28,7 @@ export default function Checkout() {
     formState: { errors },
   } = useForm();
 
-  const user = useSelector(selectUserInfo);
+  const userInfo = useSelector(selectUserInfo);
   const orderPlaced = useSelector(selectCurrentOrderStatus);
 
   const totalAmount = items.reduce(
@@ -42,7 +42,7 @@ export default function Checkout() {
 
   const handleQuantity = (e, item) => {
     dispatch(
-      updateCartAsync({ id: item.id, quantity: +e.target.value }, user.id)
+      updateCartAsync({ id: item.id, quantity: +e.target.value }, userInfo.id)
     );
   };
   const handleDelete = (item) => {
@@ -50,7 +50,7 @@ export default function Checkout() {
   };
 
   const handleAddress = (e) => {
-    setSelectedAddress(user.addresses[e.target.value]);
+    setSelectedAddress(userInfo.addresses[e.target.value]);
   };
   const handlePayment = (e) => {
     setPaymentMethod(e.target.value);
@@ -61,7 +61,7 @@ export default function Checkout() {
       items,
       totalItems,
       totalAmount,
-      user: user.id,
+      user: userInfo.id,
       paymentMethod,
       selectedAddress,
       status: "pending",
@@ -88,9 +88,9 @@ export default function Checkout() {
               onSubmit={handleSubmit((data) => {
                 dispatch(
                   updateUserAsync({
-                    ...user,
+                    ...userInfo,
                     addresses: [
-                      ...user.addresses,
+                      ...userInfo.addresses,
                       {
                         name: data.name,
                         email: data.email,
@@ -274,7 +274,7 @@ export default function Checkout() {
                     Choose from Existing Address
                   </p>
                   <ul role="list" className="divide-y divide-gray-100">
-                    {user.addresses.map((address, index) => (
+                    {userInfo.addresses.map((address, index) => (
                       <li
                         key={index}
                         className="flex justify-between px-5 gap-x-6 py-5 border-solid border-2 border-gray-200"

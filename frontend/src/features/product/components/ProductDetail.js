@@ -5,9 +5,9 @@ import { RadioGroup } from "@headlessui/react";
 import { fetchProductByIdAsync, selectedProduct } from "../productSlice";
 import { useParams } from "react-router-dom";
 import { addToCartAsync, selectItems } from "../../cart/cartSlice";
-import { selectLoggedInUser } from "../../auth/authSlice";
 import { discountPercentage } from "../../../app/constants";
 import { useAlert } from "react-alert";
+import { selectUserInfo } from "../../user/userSlice";
 
 const colors = [
   { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
@@ -42,7 +42,7 @@ export default function ProductDetail() {
   const product = useSelector(selectedProduct);
   const cart = useSelector(selectItems);
   // const reviews = product.rating;
-  const user = useSelector(selectLoggedInUser);
+  const userInfo = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const { id } = useParams();
   const alert = useAlert();
@@ -59,7 +59,7 @@ export default function ProductDetail() {
       const newItem = {
         product: product.id,
         quantity: 1,
-        user: user.id,
+        user: userInfo.id,
       };
       dispatch(addToCartAsync(newItem));
     } else {
