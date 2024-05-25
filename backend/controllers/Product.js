@@ -13,8 +13,17 @@ exports.createProduct = async (req, res) => {
 
 exports.fetchAllProducts = async (req, res) => {
   try {
-    let query = Product.find({ deleted: { $ne: true } });
-    let totalItems = Product.find({ deleted: { $ne: true } });
+    let admin = req.query.admin;
+    let query;
+    let totalItems;
+
+    if (admin) {
+      query = Product.find({});
+      totalItems = Product.find({});
+    } else {
+      query = Product.find({ deleted: { $ne: true } });
+      totalItems = Product.find({ deleted: { $ne: true } });
+    }
     if (req.query.category) {
       query = query.find({ category: [req.query.category] });
       totalItems = totalItems.find({ category: [req.query.category] });

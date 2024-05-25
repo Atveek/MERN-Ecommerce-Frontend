@@ -13,11 +13,13 @@ import {
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import Modal from "../../common/Modal";
+import { useAlert } from "react-alert";
 
 export default function ProductForm() {
   const categories = useSelector(selectCategories);
   const brands = useSelector(selectBrands);
   const dispatch = useDispatch();
+  const alert = useAlert();
   const {
     register,
     handleSubmit,
@@ -78,8 +80,10 @@ export default function ProductForm() {
           if (params.id) {
             dispatch(updateProductAsync({ ...product1, id: params.id }));
             dispatch(clearSelectedProduct());
+            alert.success("Update SuccessFully");
           } else {
             dispatch(createProductAsync(product1));
+            alert.success("Product Create SuccessFully");
           }
         })}
       >
@@ -285,9 +289,7 @@ export default function ProductForm() {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
                     <input
                       type="text"
-                      {...register("image1", {
-                        required: "image1 is required",
-                      })}
+                      {...register("image1", {})}
                       id="image1"
                       autoComplete="username"
                       className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
@@ -306,9 +308,7 @@ export default function ProductForm() {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
                     <input
                       type="text"
-                      {...register("image2", {
-                        required: "image2 is required",
-                      })}
+                      {...register("image2", {})}
                       id="image2"
                       className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     />
@@ -326,9 +326,7 @@ export default function ProductForm() {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
                     <input
                       type="text"
-                      {...register("image3", {
-                        required: "image3 is required",
-                      })}
+                      {...register("image3", {})}
                       id="image3"
                       className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     />
@@ -346,9 +344,7 @@ export default function ProductForm() {
                   <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 ">
                     <input
                       type="text"
-                      {...register("image4", {
-                        required: "image4 is required",
-                      })}
+                      {...register("image4", {})}
                       id="image4"
                       autoComplete="username"
                       className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"

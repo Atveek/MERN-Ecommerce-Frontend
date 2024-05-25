@@ -133,13 +133,13 @@ export default function AdminOrder() {
                               <div className="mr-2">
                                 <img
                                   className="w-16 h-16 rounded-xl"
-                                  src={item.thumbnail}
-                                  alt={item.title}
+                                  src={item.product.thumbnail}
+                                  alt={item.product.title}
                                 />
                               </div>
                               <span>
-                                {item.title} -{item.quantity} -
-                                {discountPercentage(item)}
+                                {item.product.title} -{item.quantity} -
+                                {discountPercentage(item.product)}
                               </span>
                             </div>
                           );
@@ -153,13 +153,13 @@ export default function AdminOrder() {
                       <td className="py-3 px-6 text-center">
                         <div className=" items-center justify-center text-md font-semibold">
                           <div>
-                            <strong>{order.selectAddress.name}</strong>
+                            <strong>{order.selectedAddress.name}</strong>
                           </div>
-                          <div>{order.selectAddress.phone}</div>
-                          <div>{order.selectAddress.street}</div>
-                          <div>{order.selectAddress.city}</div>
-                          <div>{order.selectAddress.state}</div>
-                          <div>{order.selectAddress.pinCode}</div>
+                          <div>{order.selectedAddress.phone}</div>
+                          <div>{order.selectedAddress.street}</div>
+                          <div>{order.selectedAddress.city}</div>
+                          <div>{order.selectedAddress.state}</div>
+                          <div>{order.selectedAddress.pinCode}</div>
                         </div>
                       </td>
                       <td className="py-3 px-6 text-center">

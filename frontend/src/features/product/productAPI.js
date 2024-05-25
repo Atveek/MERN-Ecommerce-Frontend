@@ -22,7 +22,7 @@ export function fetchAllBrands() {
   });
 }
 
-export function fetchProductByFilters(filter, sort, pagination) {
+export function fetchProductByFilters(filter, sort, pagination, admin) {
   let queryString = "";
   console.log(filter, sort);
   for (let key in filter) {
@@ -39,6 +39,10 @@ export function fetchProductByFilters(filter, sort, pagination) {
   console.log(pagination);
   for (let key in pagination) {
     queryString += `${key}=${pagination[key]}&`;
+  }
+
+  if (admin) {
+    queryString += `admin=true`;
   }
   console.log("http://localhost:8080/products?" + queryString);
   return new Promise(async (resolve) => {

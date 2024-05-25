@@ -98,7 +98,14 @@ export default function AdminProductList() {
 
   useEffect(() => {
     const pageobj = { _page: page, _limit: ITEMS_PER_PAGE };
-    dispatch(fetchProductByFiltersAsync({ filter, sort, pagination: pageobj }));
+    dispatch(
+      fetchProductByFiltersAsync({
+        filter,
+        sort,
+        pagination: pageobj,
+        admin: true,
+      })
+    );
   }, [dispatch, filter, sort, page]);
 
   useEffect(() => {
@@ -422,8 +429,8 @@ function ProductGrid({ products }) {
           </Link>
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
             {products.map((product) => (
-              <div>
-                <Link to={`/product-detail/${product.id}`} key={product.id}>
+              <div key={product.id}>
+                <Link to={`/product-detail/${product.id}`}>
                   <div className="group relative border-2 border-solid border-gray-200 p-2">
                     <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                       <img
@@ -459,6 +466,11 @@ function ProductGrid({ products }) {
                     </div>
                     {product.deleted && (
                       <p className="text-sm text-red-600">product Deleted</p>
+                    )}
+                    {product.stock <= 0 && (
+                      <div>
+                        <p className="text-sm text-red-400">Out of Stock</p>
+                      </div>
                     )}
                   </div>
                 </Link>

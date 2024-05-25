@@ -28,7 +28,7 @@ import AdminOrderPage from "./pages/AdminOrderPage";
 
 const options = {
   timeout: 5000,
-  position: positions.BOTTOM_CENTER,
+  position: positions.TOP_CENTER,
 };
 
 const router = createBrowserRouter([
