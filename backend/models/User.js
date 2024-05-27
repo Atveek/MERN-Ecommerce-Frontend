@@ -7,8 +7,8 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  password: { 
-    type: String,
+  password: {
+    type: Buffer,
     required: true,
   },
   addresses: {
@@ -25,6 +25,7 @@ const userSchema = new Schema({
   orders: {
     type: [Schema.Types.Mixed],
   },
+  salt: Buffer,
 });
 
 const virtual = userSchema.virtual("id");

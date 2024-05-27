@@ -15,7 +15,7 @@ export function checkUser(user) {
     try {
       const response = await fetch(`http://localhost:8080/auth/login`, {
         method: "POST",
-        body: JSON.stringify(user),
+        body: JSON.stringify({ username: user.email, password: user.password }),
         headers: { "content-type": "application/json" },
       });
       if (response.ok) {
