@@ -49,7 +49,7 @@ exports.loginUser = async (req, res) => {
     .json({ token, role });
 };
 
-exports.checkUser = async (req, res) => {
+exports.checkAuth = async (req, res) => {
   if (req.user) {
     res.json(req.user);
   } else {

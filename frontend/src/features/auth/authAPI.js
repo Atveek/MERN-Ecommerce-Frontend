@@ -10,7 +10,7 @@ export function createUser(user) {
   });
 }
 
-export function checkUser(user) {
+export function loginUser(user) {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await fetch(`http://localhost:8080/auth/login`, {
@@ -30,6 +30,23 @@ export function checkUser(user) {
     }
   });
 }
+export function checkAuth(user) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`http://localhost:8080/auth/check`);
+      if (response.ok) {
+        const data = await response.json();
+        resolve({ data });
+      } else {
+        const err = await response.json();
+        reject({ err });
+      }
+    } catch (err) {
+      reject({ err });
+    }
+  });
+}
+
 export function SignOut() {
   return new Promise(async (resolve, reject) => {
     // const response = await fetch(`http://localhost:8080/user/${userId}`);

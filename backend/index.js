@@ -21,6 +21,7 @@ const cartRouter = require("./routes/Cart");
 const ordersRouter = require("./routes/Order");
 const { User } = require("./model/User");
 const { isAuth, sanitizeUser, cookieExtractor } = require("./services/common");
+const path = require("path");
 
 const SECRET_KEY = "SECRET_KEY";
 // JWT options
@@ -31,7 +32,7 @@ opts.secretOrKey = SECRET_KEY; // TODO: should not be in code;
 
 //middlewares
 
-server.use(express.static("build"));
+server.use(express.static(path.join(__dirname, "build"))); // Update this line
 server.use(cookieParser());
 
 server.use(
@@ -127,6 +128,10 @@ async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/eKart");
   console.log("database connected");
 }
+
+server.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 server.listen(8080, () => {
   console.log("server started");
 });

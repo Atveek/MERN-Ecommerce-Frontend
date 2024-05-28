@@ -37,7 +37,7 @@ function NavBar({ children }) {
                     <div className="flex-shrink-0">
                       <Link to="/">
                         <img
-                          className="h-14 w-auto"
+                          className="h-10 w-auto"
                           src="/ekart.png"
                           alt="Your Company"
                         />
