@@ -5,7 +5,7 @@ const {
   addToCart,
   deleteFromCart,
   updateCart,
-} = require("../controllers/Cart");
+} = require("../controller/Cart");
 
 const router = express.Router();
 

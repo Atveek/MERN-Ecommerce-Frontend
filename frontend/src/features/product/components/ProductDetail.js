@@ -42,7 +42,6 @@ export default function ProductDetail() {
   const product = useSelector(selectedProduct);
   const cart = useSelector(selectItems);
   // const reviews = product.rating;
-  const userInfo = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const { id } = useParams();
   const alert = useAlert();
@@ -59,7 +58,6 @@ export default function ProductDetail() {
       const newItem = {
         product: product.id,
         quantity: 1,
-        user: userInfo.id,
       };
       dispatch(addToCartAsync(newItem));
     } else {

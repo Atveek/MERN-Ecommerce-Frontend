@@ -75,5 +75,6 @@ export const selectCurrentOrderStatus = (state) =>
   state.order.currentOrderPlaced;
 export const selectTotalOrders = (state) => state.order.totalOrders;
 export const selectAllOrders = (state) => state.order.orders;
+export const selectUserInfoStatus = (state) => state.order.status;
 
 export default orderSlice.reducer;
