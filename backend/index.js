@@ -1,5 +1,7 @@
 const express = require("express");
 const server = express();
+const dotenv = require("dotenv");
+dotenv.config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
@@ -13,7 +15,6 @@ const cookieParser = require("cookie-parser");
 const { createProduct } = require("./controller/Product");
 const productsRouter = require("./routes/Products");
 const categoriesRouter = require("./routes/Categories");
-
 const brandsRouter = require("./routes/Brands");
 const usersRouter = require("./routes/Users");
 const authRouter = require("./routes/Auth");
@@ -24,23 +25,19 @@ const { isAuth, sanitizeUser, cookieExtractor } = require("./services/common");
 const path = require("path");
 
 const SECRET_KEY = "SECRET_KEY";
-// JWT options
 
 const opts = {};
 opts.jwtFromRequest = cookieExtractor;
-opts.secretOrKey = SECRET_KEY; // TODO: should not be in code;
+opts.secretOrKey = SECRET_KEY;
 
-//middlewares
-
-server.use(express.static(path.join(__dirname, "build"))); // Update this line
+// middlewares
+server.use(express.static(path.join(__dirname, "build")));
 server.use(cookieParser());
-
 server.use(
   session({
-    secret: "keyboard cat",
-
-    resave: false, // don't save session if unmodified
-    saveUninitialized: false, // don't create session until something stored
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: false,
   })
 );
 server.use(passport.authenticate("session"));
@@ -49,16 +46,15 @@ server.use(
     exposedHeaders: ["X-Total-Count"],
   })
 );
-server.use(express.json()); // to parse req.body
+server.use(express.json());
 server.use("/products", isAuth(), productsRouter);
-// we can also use JWT token for client-only auth
 server.use("/category", isAuth(), categoriesRouter);
 server.use("/brands", isAuth(), brandsRouter);
 server.use("/user", isAuth(), usersRouter);
 server.use("/auth", authRouter);
 server.use("/cart", isAuth(), cartRouter);
 server.use("/orders", isAuth(), ordersRouter);
-// Passport Strategies
+
 passport.use(
   "local",
   new LocalStrategy({ usernameField: "email" }, async function (
@@ -71,7 +67,6 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Invalid credentials" });
       }
-
       crypto.pbkdf2(
         password,
         user.salt,
@@ -96,11 +91,10 @@ passport.use(
 passport.use(
   "jwt",
   new JwtStrategy(opts, async function (jwt_payload, done) {
-    console.log({ jwt_payload });
     try {
       const user = await User.findById(jwt_payload.id);
       if (user) {
-        return done(null, sanitizeUser(user)); // this calls serializer
+        return done(null, sanitizeUser(user));
       } else {
         return done(null, false);
       }
@@ -109,20 +103,90 @@ passport.use(
     }
   })
 );
-// this creates session variable req.user on being called from callbacks
+
 passport.serializeUser(function (user, cb) {
-  console.log("serialize", user);
   process.nextTick(function () {
     return cb(null, { id: user.id, role: user.role });
   });
 });
-// this changes session variable req.user when called from authorized request
+
 passport.deserializeUser(function (user, cb) {
-  console.log("de-serialize", user);
   process.nextTick(function () {
     return cb(null, user);
   });
 });
+
+const stripe = require("stripe")(
+  "sk_test_51PLPhKSJmcBUzd6E4frMrSkZfjJgTPEGsG5zvBle5yksPRND7WtckYdXvo7TLMPMLcHVgNSpNUK1arUbr31bQ5sj008u8Q9lCQ"
+);
+
+const calculateOrderAmount = (items) => {
+  return 1400;
+};
+
+server.post("/create-payment-intent", async (req, res) => {
+  const { items, customerDetails } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(items),
+      currency: "inr",
+      description: "Export transaction for order XYZ",
+      shipping: {
+        name: customerDetails.name,
+        address: {
+          line1: customerDetails.address.line1,
+          city: customerDetails.address.city,
+          state: customerDetails.address.state,
+          postal_code: customerDetails.address.postal_code,
+          country: customerDetails.address.country,
+        },
+      },
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.send({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+const endpointSecret =
+  "whsec_fa8bb50f8a8d8f387989f6c88a9a41130e18a14ebd9dec475a8c8ab25b924d06";
+
+server.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object;
+        // Then define and call a function to handle the event payment_intent.succeeded
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  }
+);
+
 main().catch((err) => console.log(err));
 async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/eKart");
@@ -132,6 +196,7 @@ async function main() {
 server.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
+
 server.listen(8080, () => {
   console.log("server started");
 });

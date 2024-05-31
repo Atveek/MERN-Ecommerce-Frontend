@@ -72,9 +72,15 @@ export default function Checkout() {
   return (
     <>
       {items.length === 0 && <Navigate to="/" replace={true}></Navigate>}
-      {orderPlaced && (
+      {orderPlaced && orderPlaced.paymentMethod === "cash" && (
         <Navigate
           to={`/order-success/${orderPlaced.id}`}
+          replace={true}
+        ></Navigate>
+      )}
+      {orderPlaced && orderPlaced.paymentMethod === "card" && (
+        <Navigate
+          to={`/stripe-checkout`}
           replace={true}
         ></Navigate>
       )}

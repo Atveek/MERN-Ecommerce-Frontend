@@ -1,6 +1,6 @@
 export function createUser(user) {
   return new Promise(async (resolve) => {
-    const response = await fetch("http://localhost:8080/auth/signup", {
+    const response = await fetch("/auth/signup", {
       method: "POST",
       body: JSON.stringify(user),
       headers: { "content-type": "application/json" },
@@ -13,7 +13,7 @@ export function createUser(user) {
 export function loginUser(user) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/auth/login`, {
+      const response = await fetch(`/auth/login`, {
         method: "POST",
         body: JSON.stringify({ email: user.email, password: user.password }),
         headers: { "content-type": "application/json" },
@@ -33,7 +33,7 @@ export function loginUser(user) {
 export function checkAuth(user) {
   return new Promise(async (resolve, reject) => {
     try {
-      const response = await fetch(`http://localhost:8080/auth/check`);
+      const response = await fetch(`/auth/check`);
       if (response.ok) {
         const data = await response.json();
         resolve({ data });
@@ -49,7 +49,7 @@ export function checkAuth(user) {
 
 export function SignOut() {
   return new Promise(async (resolve, reject) => {
-    // const response = await fetch(`http://localhost:8080/user/${userId}`);
+    // const response = await fetch(`/user/${userId}`);
     // const data = await response.json();
 
     //TODO:  server we will remove user session info
