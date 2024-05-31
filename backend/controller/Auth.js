@@ -1,6 +1,6 @@
 const { User } = require("../model/User");
 const crypto = require("crypto");
-const { sanitizeUser } = require("../services/common");
+const { sanitizeUser } = require("../services/authservecies");
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 const jwt = require("jsonwebtoken");
 exports.createUser = async (req, res) => {

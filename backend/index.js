@@ -21,7 +21,11 @@ const authRouter = require("./routes/Auth");
 const cartRouter = require("./routes/Cart");
 const ordersRouter = require("./routes/Order");
 const { User } = require("./model/User");
-const { isAuth, sanitizeUser, cookieExtractor } = require("./services/Common");
+const {
+  isAuth,
+  sanitizeUser,
+  cookieExtractor,
+} = require("./services/authservecies");
 const path = require("path");
 
 const SECRET_KEY = "SECRET_KEY";
