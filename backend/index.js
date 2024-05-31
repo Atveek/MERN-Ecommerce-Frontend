@@ -46,18 +46,9 @@ server.use(
 );
 server.use(passport.authenticate("session"));
 server.use(
-  cors(
-    {
-      origin: [
-        "http://localhost:3000",
-        "https://mern-ekart-project.vercel.app/",
-      ], // Add more origins if needed
-      optionsSuccessStatus: 200,
-    },
-    {
-      exposedHeaders: ["X-Total-Count"],
-    }
-  )
+  cors({
+    exposedHeaders: ["X-Total-Count"],
+  })
 );
 server.use(express.json());
 server.use("/products", isAuth(), productsRouter);
