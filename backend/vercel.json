@@ -1,3 +1,4 @@
+
 {
     "builds": [
       {
@@ -19,11 +20,11 @@
         "dest": "index.js"
       },
       {
-        "src": "/categories",
+        "src": "/category",
         "dest": "index.js"
       },
       {
-        "src": "/categories/(.*)",
+        "src": "/category/(.*)",
         "dest": "index.js"
       },
       {
@@ -35,11 +36,11 @@
         "dest": "index.js"
       },
       {
-        "src": "/users",
+        "src": "/user",
         "dest": "index.js"
       },
       {
-        "src": "/users/(.*)",
+        "src": "/user/(.*)",
         "dest": "index.js"
       },
       {

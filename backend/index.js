@@ -31,7 +31,7 @@ opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = SECRET_KEY;
 
 // middlewares
-server.use(express.static(path.join(__dirname, "build")));
+server.use(express.static(path.resolve(__dirname, "build")));
 server.use(cookieParser());
 server.use(
   session({
