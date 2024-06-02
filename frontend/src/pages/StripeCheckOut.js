@@ -28,7 +28,7 @@ export default function StripeCheckOut() {
     const createPaymentIntent = async () => {
       try {
         const response = await fetch(
-          "https://mern-ecommerce-project-gilt.vercel.app/create-payment-intent",
+          "https://mern-ekart-project.vercel.app/create-payment-intent",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
