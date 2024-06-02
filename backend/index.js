@@ -35,7 +35,7 @@ opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = SECRET_KEY;
 
 // middlewares
-server.use(express.json());   
+server.use(express.json());
 server.use(express.static(path.resolve(__dirname, "build")));
 server.use(cookieParser());
 server.use(express.raw({ type: "application/json" }));
@@ -48,9 +48,14 @@ server.use(
 );
 server.use(passport.authenticate("session"));
 server.use(
-  cors({
-    exposedHeaders: ["X-Total-Count"],
-  })
+  cors(
+    {
+      origin: "https://mern-ekart-project.vercel.app",
+    },
+    {
+      exposedHeaders: ["X-Total-Count"],
+    }
+  )
 );
 server.use("/products", isAuth(), productsRouter);
 server.use("/category", isAuth(), categoriesRouter);
