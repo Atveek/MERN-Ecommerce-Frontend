@@ -35,8 +35,10 @@ opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = SECRET_KEY;
 
 // middlewares
+server.use(express.json());   
 server.use(express.static(path.resolve(__dirname, "build")));
 server.use(cookieParser());
+server.use(express.raw({ type: "application/json" }));
 server.use(
   session({
     secret: process.env.SESSION_KEY,
@@ -50,7 +52,6 @@ server.use(
     exposedHeaders: ["X-Total-Count"],
   })
 );
-server.use(express.json());
 server.use("/products", isAuth(), productsRouter);
 server.use("/category", isAuth(), categoriesRouter);
 server.use("/brands", isAuth(), brandsRouter);
@@ -160,36 +161,35 @@ server.post("/create-payment-intent", async (req, res) => {
 const endpointSecret =
   "whsec_fa8bb50f8a8d8f387989f6c88a9a41130e18a14ebd9dec475a8c8ab25b924d06";
 
-server.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  (request, response) => {
-    const sig = request.headers["stripe-signature"];
+server.post("/webhook", (request, response) => {
+  const sig = request.headers["stripe-signature"];
 
-    let event;
+  let event;
 
-    try {
-      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    } catch (err) {
-      response.status(400).send(`Webhook Error: ${err.message}`);
-      return;
-    }
-
-    // Handle the event
-    switch (event.type) {
-      case "payment_intent.succeeded":
-        const paymentIntentSucceeded = event.data.object;
-        // Then define and call a function to handle the event payment_intent.succeeded
-        break;
-      // ... handle other event types
-      default:
-        console.log(`Unhandled event type ${event.type}`);
-    }
-
-    // Return a 200 response to acknowledge receipt of the event
-    response.send();
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    console.log("Webhook event verified:", event);
+  } catch (err) {
+    console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
-);
+
+  // Handle the event
+  switch (event.type) {
+    case "payment_intent.succeeded":
+      const paymentIntentSucceeded = event.data.object;
+      console.log("PaymentIntent was successful:", paymentIntentSucceeded);
+      // Handle the event here (e.g., update database)
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
+});
 
 main().catch((err) => console.log(err));
 async function main() {
