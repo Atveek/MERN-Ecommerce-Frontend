@@ -27,6 +27,7 @@ const {
   cookieExtractor,
 } = require("./services/authservecies");
 const path = require("path");
+const bodyParser = require("body-parser");
 
 const SECRET_KEY = "SECRET_KEY";
 
@@ -166,34 +167,41 @@ server.post("/create-payment-intent", async (req, res) => {
 const endpointSecret =
   "whsec_fa8bb50f8a8d8f387989f6c88a9a41130e18a14ebd9dec475a8c8ab25b924d06";
 
+server.use("/webhook", bodyParser.raw({ type: "application/json" }));
+
 server.post("/webhook", (request, response) => {
   const sig = request.headers["stripe-signature"];
+  const body = request.body;
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    console.log("Webhook event verified:", event);
+    // Construct the event using the raw request body
+    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
   } catch (err) {
-    console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+    console.error("⚠️ Webhook signature verification failed:", err.message);
+    return response.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   // Handle the event
   switch (event.type) {
     case "payment_intent.succeeded":
-      const paymentIntentSucceeded = event.data.object;
-      console.log("PaymentIntent was successful:", paymentIntentSucceeded);
-      // Handle the event here (e.g., update database)
+      const paymentIntent = event.data.object;
+      console.log("PaymentIntent was successful:", paymentIntent);
+      // Handle successful payment intent here
+      break;
+    case "payment_method.attached":
+      const paymentMethod = event.data.object;
+      console.log("PaymentMethod was attached to a Customer:", paymentMethod);
+      // Handle payment method attachment here
       break;
     // ... handle other event types
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
 
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
+  // Return a response to acknowledge receipt of the event
+  response.json({ received: true });
 });
 
 main().catch((err) => console.log(err));
