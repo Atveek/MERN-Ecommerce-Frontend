@@ -28,6 +28,7 @@ const {
   sanitizeUser,
   cookieExtractor,
 } = require("./services/authservecies");
+const { Order } = require("./model/Order");
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -141,7 +142,7 @@ server.post("/create-payment-intent", async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: items.totalAmount*100, // Example static amount
+      amount: items.totalAmount * 100, // Example static amount
       currency: "inr",
       description: `Export transaction for order ${customerDetails.name} from ${customerDetails.address.state},${customerDetails.address.country}`,
       shipping: {
@@ -170,7 +171,7 @@ server.post("/create-payment-intent", async (req, res) => {
 server.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  (request, response) => {
+  async (request, response) => {
     let event = request.body;
     // Only verify the event if you have an endpoint secret defined.
     // Otherwise use the basic event deserialized with JSON.parse
@@ -196,8 +197,9 @@ server.post(
         console.log(
           `PaymentIntent for ${paymentIntent.amount} was successful!ok`
         );
-        // Then define and call a method to handle the successful payment intent.
-        // handlePaymentIntentSucceeded(paymentIntent);
+        const order = await Order.findById(paymentIntent.metadata.order_id);
+        order.paymentStatus = "received";
+        await order.save();
         break;
       case "payment_method.attached":
         const paymentMethod = event.data.object;
