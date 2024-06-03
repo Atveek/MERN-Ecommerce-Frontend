@@ -207,7 +207,7 @@ export default function AdminOrder() {
                         ) : (
                           <span
                             className={`${chooseColor(
-                              order.status
+                              order.paymentStatus
                             )} py-1 px-3 rounded-full text-xs`}
                           >
                             {order.paymentStatus}
