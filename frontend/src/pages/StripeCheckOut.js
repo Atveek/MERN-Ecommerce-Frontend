@@ -13,26 +13,29 @@ const stripePromise = loadStripe(
 export default function StripeCheckOut() {
   const [clientSecret, setClientSecret] = useState("");
   const currentOrder = useSelector(selectCurrentOrderStatus);
-  const customerDetails = {
-    name: "John Doe",
-    address: {
-      line1: "123 Main St",
-      city: "Mumbai",
-      state: "MH",
-      postal_code: "400001",
-      country: "IN",
-    },
-  };
 
   useEffect(() => {
     const createPaymentIntent = async () => {
       try {
+        const customerDetails = {
+          name: currentOrder.selectedAddress.name,
+          address: {
+            line1: currentOrder.selectedAddress.street,
+            city: currentOrder.selectedAddress.city,
+            state: currentOrder.selectedAddress.state,
+            postal_code: currentOrder.selectedAddress.pinCode,
+            country: "IN",
+          },
+        };
         const response = await fetch(
           "https://mern-ekart-project.vercel.app/create-payment-intent",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ items: currentOrder, customerDetails }),
+            metadata: {
+              order_id: currentOrder.id,
+            },
           }
         );
         const data = await response.json();
