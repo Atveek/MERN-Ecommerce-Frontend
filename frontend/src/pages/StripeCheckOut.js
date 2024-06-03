@@ -32,10 +32,11 @@ export default function StripeCheckOut() {
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ items: currentOrder, customerDetails }),
-            metadata: {
+            body: JSON.stringify({
+              items: currentOrder,
+              customerDetails,
               order_id: currentOrder.id,
-            },
+            }),
           }
         );
         const data = await response.json();

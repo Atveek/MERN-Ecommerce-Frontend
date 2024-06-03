@@ -141,9 +141,9 @@ server.post("/create-payment-intent", async (req, res) => {
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1400, // Example static amount
+      amount: items.totalAmount*100, // Example static amount
       currency: "inr",
-      description: "Export transaction for order XYZ",
+      description: `Export transaction for order ${customerDetails.name} from ${customerDetails.address.state},${customerDetails.address.country}`,
       shipping: {
         name: customerDetails.name,
         address: {
@@ -155,6 +155,9 @@ server.post("/create-payment-intent", async (req, res) => {
         },
       },
       automatic_payment_methods: { enabled: true },
+      metadata: {
+        order_id: items.id,
+      },
     });
 
     res.send({ clientSecret: paymentIntent.client_secret });
