@@ -35,7 +35,6 @@ export default function StripeCheckOut() {
             body: JSON.stringify({
               items: currentOrder,
               customerDetails,
-              order_id: currentOrder.id,
             }),
           }
         );
