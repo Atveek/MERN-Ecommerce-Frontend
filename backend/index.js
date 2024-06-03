@@ -12,6 +12,8 @@ const jwt = require("jsonwebtoken");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const cookieParser = require("cookie-parser");
+const path = require("path");
+
 const { createProduct } = require("./controller/Product");
 const productsRouter = require("./routes/Products");
 const categoriesRouter = require("./routes/Categories");
@@ -26,20 +28,24 @@ const {
   sanitizeUser,
   cookieExtractor,
 } = require("./services/authservecies");
-const path = require("path");
-const bodyParser = require("body-parser");
 
-const SECRET_KEY = "SECRET_KEY";
-
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const endpointSecret = process.env.ENDPOINT_URL;
 const opts = {};
 opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = SECRET_KEY;
 
-// middlewares
-server.use(express.json());
+// Middlewares
+server.use((req, res, next) => {
+  if (req.originalUrl.startsWith("/webhook")) {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 server.use(express.static(path.resolve(__dirname, "build")));
 server.use(cookieParser());
-server.use(express.raw({ type: "application/json" }));
 server.use(
   session({
     secret: process.env.SESSION_KEY,
@@ -49,15 +55,78 @@ server.use(
 );
 server.use(passport.authenticate("session"));
 server.use(
-  cors(
-    {
-      origin: "https://mern-ekart-project.vercel.app",
-    },
-    {
-      exposedHeaders: ["X-Total-Count"],
+  cors({
+    exposedHeaders: ["X-Total-Count"],
+  })
+);
+
+// Configure Passport strategies
+passport.use(
+  "local",
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return done(null, false, { message: "Invalid credentials" });
+        }
+        crypto.pbkdf2(
+          password,
+          user.salt,
+          310000,
+          32,
+          "sha256",
+          (err, hashedPassword) => {
+            if (err) return done(err);
+            if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
+              return done(null, false, { message: "Invalid credentials" });
+            }
+            const token = jwt.sign(sanitizeUser(user), SECRET_KEY);
+            return done(null, { token, role: user.role });
+          }
+        );
+      } catch (err) {
+        return done(err);
+      }
     }
   )
 );
+
+passport.use(
+  "jwt",
+  new JwtStrategy(
+    { jwtFromRequest: cookieExtractor, secretOrKey: SECRET_KEY },
+    async (jwt_payload, done) => {
+      try {
+        const user = await User.findById(jwt_payload.id);
+        if (user) {
+          return done(null, sanitizeUser(user));
+        } else {
+          return done(null, false);
+        }
+      } catch (err) {
+        return done(err, false);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, cb) => {
+  process.nextTick(() => {
+    cb(null, { id: user.id, role: user.role });
+  });
+});
+
+passport.deserializeUser((user, cb) => {
+  process.nextTick(() => {
+    cb(null, user);
+  });
+});
+
+// Apply express.json middleware only to non-webhook routes
+
+// Routes
 server.use("/products", isAuth(), productsRouter);
 server.use("/category", isAuth(), categoriesRouter);
 server.use("/brands", isAuth(), brandsRouter);
@@ -66,81 +135,13 @@ server.use("/auth", authRouter);
 server.use("/cart", isAuth(), cartRouter);
 server.use("/orders", isAuth(), ordersRouter);
 
-passport.use(
-  "local",
-  new LocalStrategy({ usernameField: "email" }, async function (
-    email,
-    password,
-    done
-  ) {
-    try {
-      const user = await User.findOne({ email: email });
-      if (!user) {
-        return done(null, false, { message: "Invalid credentials" });
-      }
-      crypto.pbkdf2(
-        password,
-        user.salt,
-        310000,
-        32,
-        "sha256",
-        function (err, hashedPassword) {
-          if (err) return done(err);
-          if (!crypto.timingSafeEqual(user.password, hashedPassword)) {
-            return done(null, false, { message: "Invalid credentials" });
-          }
-          const token = jwt.sign(sanitizeUser(user), SECRET_KEY);
-          return done(null, { token, role: user.role });
-        }
-      );
-    } catch (err) {
-      return done(err);
-    }
-  })
-);
-
-passport.use(
-  "jwt",
-  new JwtStrategy(opts, async function (jwt_payload, done) {
-    try {
-      const user = await User.findById(jwt_payload.id);
-      if (user) {
-        return done(null, sanitizeUser(user));
-      } else {
-        return done(null, false);
-      }
-    } catch (err) {
-      return done(err, false);
-    }
-  })
-);
-
-passport.serializeUser(function (user, cb) {
-  process.nextTick(function () {
-    return cb(null, { id: user.id, role: user.role });
-  });
-});
-
-passport.deserializeUser(function (user, cb) {
-  process.nextTick(function () {
-    return cb(null, user);
-  });
-});
-
-const stripe = require("stripe")(
-  "sk_test_51PLPhKSJmcBUzd6E4frMrSkZfjJgTPEGsG5zvBle5yksPRND7WtckYdXvo7TLMPMLcHVgNSpNUK1arUbr31bQ5sj008u8Q9lCQ"
-);
-
-const calculateOrderAmount = (items) => {
-  return 1400;
-};
-
+// Payment Intent Endpoint
 server.post("/create-payment-intent", async (req, res) => {
   const { items, customerDetails } = req.body;
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: calculateOrderAmount(items),
+      amount: 1400, // Example static amount
       currency: "inr",
       description: "Export transaction for order XYZ",
       shipping: {
@@ -153,9 +154,7 @@ server.post("/create-payment-intent", async (req, res) => {
           country: customerDetails.address.country,
         },
       },
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      automatic_payment_methods: { enabled: true },
     });
 
     res.send({ clientSecret: paymentIntent.client_secret });
@@ -164,56 +163,51 @@ server.post("/create-payment-intent", async (req, res) => {
   }
 });
 
-const endpointSecret =
-  "whsec_fa8bb50f8a8d8f387989f6c88a9a41130e18a14ebd9dec475a8c8ab25b924d06";
+// Webhook Endpoint
+server.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
+    let event;
 
-server.use("/webhook", bodyParser.raw({ type: "application/json" }));
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+      console.log("Webhook event verified:", event);
+    } catch (err) {
+      console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
 
-server.post("/webhook", (request, response) => {
-  const sig = request.headers["stripe-signature"];
-  const body = request.body;
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object;
+        console.log("PaymentIntent was successful:", paymentIntentSucceeded);
+        // Handle the event here (e.g., update database)
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
 
-  let event;
-
-  try {
-    // Construct the event using the raw request body
-    event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
-  } catch (err) {
-    console.error("⚠️ Webhook signature verification failed:", err.message);
-    return response.status(400).send(`Webhook Error: ${err.message}`);
+    response.send();
   }
+);
 
-  // Handle the event
-  switch (event.type) {
-    case "payment_intent.succeeded":
-      const paymentIntent = event.data.object;
-      console.log("PaymentIntent was successful:", paymentIntent);
-      // Handle successful payment intent here
-      break;
-    case "payment_method.attached":
-      const paymentMethod = event.data.object;
-      console.log("PaymentMethod was attached to a Customer:", paymentMethod);
-      // Handle payment method attachment here
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
-  }
-
-  // Return a response to acknowledge receipt of the event
-  response.json({ received: true });
-});
-
-main().catch((err) => console.log(err));
+// Connect to the database and start the server
 async function main() {
   await mongoose.connect(process.env.MONGO_URL);
   console.log("database connected");
 }
 
+main().catch((err) => console.log(err));
+
 server.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
-server.listen(8080, () => {
+server.listen(process.env.PORT, () => {
   console.log("server started");
 });
