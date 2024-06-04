@@ -30,6 +30,7 @@ const {
 } = require("./services/authservecies");
 const { Order } = require("./model/Order");
 
+
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.ENDPOINT_URL;
@@ -215,6 +216,8 @@ server.post(
     response.send();
   }
 );
+
+server.post("/mail", async (req, res) => {});
 
 // Connect to the database and start the server
 async function main() {

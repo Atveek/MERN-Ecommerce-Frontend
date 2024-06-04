@@ -56,3 +56,44 @@ export function SignOut() {
     resolve({ data: "success" });
   });
 }
+
+export function resetPasswordRequest(email) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`/auth/reset-password-request`, {
+        method: "POST",
+        body: JSON.stringify({ email }),
+        headers: { "content-type": "application/json" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        resolve({ data });
+      } else {
+        const err = await response.json();
+        reject({ err });
+      }
+    } catch (err) {
+      reject({ err });
+    }
+  });
+}
+export function resetPassword(update) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch(`/auth/reset-password`, {
+        method: "POST",
+        body: JSON.stringify(update),
+        headers: { "content-type": "application/json" },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        resolve({ data });
+      } else {
+        const err = await response.json();
+        reject({ err });
+      }
+    } catch (err) {
+      reject({ err });
+    }
+  });
+}
