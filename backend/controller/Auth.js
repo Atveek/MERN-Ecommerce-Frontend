@@ -109,7 +109,6 @@ exports.resetPassword = async (req, res) => {
     res.sendStatus(401);
   }
 };
-
 exports.logout = async (req, res) => {
   console.log("logout");
   res
