@@ -45,7 +45,7 @@ server.use((req, res, next) => {
     express.json()(req, res, next);
   }
 });
-server.use(express.static(path.resolve(__dirname, "../frontend/build")));
+server.use(express.static(path.resolve(__dirname, "build")));
 server.use(cookieParser());
 server.use(
   session({
