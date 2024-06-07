@@ -24,6 +24,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE, discountPercentage } from "../../../app/constants";
 import { Pagination } from "../../common/Pagination";
+import Card from "../../../pages/Card";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -125,7 +126,7 @@ export default function AdminProductList() {
               setMobileFiltersOpen={setMobileFiltersOpen}
               handleFilter={handleFilter}
             ></MobileFilter>
-            <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <main className="mx-auto  px-4 sm:px-6 lg:px-8">
               <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-8">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900">
                   All Products
@@ -430,7 +431,7 @@ function ProductGrid({ products }) {
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
             {products.map((product) => (
               <div key={product.id}>
-                <Link to={`/product-detail/${product.id}`}>
+                {/* <Link to={`/product-detail/${product.id}`}>
                   <div className="group relative border-2 border-solid border-gray-200 p-2">
                     <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
                       <img
@@ -473,16 +474,19 @@ function ProductGrid({ products }) {
                       </div>
                     )}
                   </div>
-                </Link>
-                <div>
-                  <Link
-                    type="button"
-                    to={`/admin/product-form/${product.id}`}
-                    className="rounded-md bg-indigo-600 my-3 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    Edit Product
-                  </Link>
+                </Link> */}
+                <div key={product.id}>
+                  <Card
+                    title={product.title}
+                    image={product.thumbnail}
+                    description={product.description}
+                    price={discountPercentage(product)}
+                    rating={product.rating}
+                    id={product.id}
+                    buttonName={"Edit Product"}
+                  ></Card>
                 </div>
+                <div></div>
               </div>
             ))}
           </div>

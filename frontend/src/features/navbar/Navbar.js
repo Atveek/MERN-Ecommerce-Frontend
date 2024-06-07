@@ -31,7 +31,7 @@ function NavBar({ children }) {
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>
-              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="mx-auto  px-4 sm:px-6 lg:px-8">
                 <div className="flex h-16 items-center justify-between">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -183,7 +183,7 @@ function NavBar({ children }) {
                         {user.email}
                       </div>
                     </div>
-                    <Link to="/cart">
+                    <Link to="/my-cart">
                       <button
                         type="button"
                         className="ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -218,16 +218,14 @@ function NavBar({ children }) {
           )}
         </Disclosure>
         <header className="bg-white shadow">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto  px-4 py-6 sm:px-6 lg:px-8">
             <h1 className="text-3xl font-bold tracking-tight text-gray-900">
               E-Commerce
             </h1>
           </div>
         </header>
         <main>
-          <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            {children}
-          </div>
+          <div className="mx-auto  py-6 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
     </>

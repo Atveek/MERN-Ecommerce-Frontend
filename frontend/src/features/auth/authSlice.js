@@ -68,6 +68,7 @@ export const resetPasswordAsync = createAsyncThunk(
 );
 
 export const SignOutAsync = createAsyncThunk("auth/SignOut", async () => {
+  console.log("SignOutAsync");
   const response = await SignOut();
   return response.data;
 });

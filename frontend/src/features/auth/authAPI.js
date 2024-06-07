@@ -49,11 +49,17 @@ export function checkAuth(user) {
 
 export function SignOut() {
   return new Promise(async (resolve, reject) => {
-    // const response = await fetch(`/user/${userId}`);
-    // const data = await response.json();
-
-    //TODO:  server we will remove user session info
-    resolve({ data: "success" });
+    try {
+      const response = await fetch(`/auth/logout`);
+      if (response.ok) {
+        resolve({ data: "success" });
+      } else {
+        const err = await response.text();
+        reject({ err });
+      }
+    } catch (err) {
+      reject({ err });
+    }
   });
 }
 

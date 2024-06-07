@@ -25,6 +25,8 @@ import {
 } from "@heroicons/react/20/solid";
 import { ITEMS_PER_PAGE, discountPercentage } from "../../../app/constants";
 import { Pagination } from "../../common/Pagination";
+import Card from "../../../pages/Card";
+import { addToCartAsync, selectItems } from "../../cart/cartSlice";
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -108,6 +110,20 @@ export default function ProductList() {
     dispatch(fetchAllCategoriesAsync());
   }, [dispatch]);
 
+  const cart = useSelector(selectItems);
+
+  const handleCart = (productId) => {
+    const index = cart.findIndex((item) => item.productId === productId);
+    if (index < 0) {
+      const newItem = {
+        product: productId,
+        quantity: 1,
+      };
+      dispatch(addToCartAsync(newItem));
+    } else {
+      alert.info("Item already added");
+    }
+  };
   return (
     <div>
       <div>
@@ -120,7 +136,7 @@ export default function ProductList() {
               setMobileFiltersOpen={setMobileFiltersOpen}
               handleFilter={handleFilter}
             ></MobileFilter>
-            <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <main className="mx-auto  px-4 sm:px-6 lg:px-8">
               <div className="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-8">
                 <h1 className="text-4xl font-bold tracking-tight text-gray-900">
                   All Products
@@ -221,7 +237,10 @@ export default function ProductList() {
                     </div>
                   ) : null}
                   <div className="lg:col-span-3">
-                    <ProductGrid products={products}></ProductGrid>
+                    <ProductGrid
+                      products={products}
+                      handleCart={handleCart}
+                    ></ProductGrid>
                   </div>
                 </div>
               </section>
@@ -421,11 +440,12 @@ function DesktopFilter({ handleFilter, filters }) {
   );
 }
 
-function ProductGrid({ products }) {
+function ProductGrid({ products, handleCart }) {
   if (!Array.isArray(products)) {
     // Handle the case where products is not an array
     return null; // Or display an error message, placeholder, etc.
   }
+
   return (
     <>
       {" "}
@@ -433,44 +453,20 @@ function ProductGrid({ products }) {
         <div className="mx-auto max-w-2xl px-4 pb-16 sm:px-6 sm:pb-24 lg:max-w-7xl lg:px-8">
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
             {products.map((product) => (
-              <Link to={`/product-detail/${product.id}`} key={product.id}>
-                <div className="group relative border-2 border-solid border-gray-200 p-2">
-                  <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-60">
-                    <img
-                      src={product.thumbnail}
-                      alt={product.title}
-                      className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                    />
-                  </div>
-                  <div className="mt-4 flex justify-between">
-                    <div>
-                      <h3 className="text-sm text-gray-700">
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {product.title}
-                      </h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        <StarIcon className="w-6 h-6 inline-block"></StarIcon>
-                        <span className="align-middle ml-1">
-                          {product.rating}
-                        </span>
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm  font-medium text-gray-900">
-                        ${discountPercentage(product)}
-                      </p>
-                      <p className="text-sm  font-medium line-through text-gray-400">
-                        ${product.price}
-                      </p>
-                    </div>
-                  </div>
-                  {product.stock <= 0 && (
-                    <div>
-                      <p className="text-sm text-red-400">Out of Stock</p>
-                    </div>
-                  )}
-                </div>
-              </Link>
+              // <Link to={`/product-detail/${product.id}`} key={product.id}>
+              <div key={product.id}>
+                <Card
+                  title={product.title}
+                  image={product.thumbnail}
+                  description={product.description}
+                  price={discountPercentage(product)}
+                  rating={product.rating}
+                  id={product.id}
+                  handleCart={handleCart}
+                  buttonName={"Add to Cart"}
+                ></Card>
+              </div>
+              // </Link>
             ))}
           </div>
         </div>

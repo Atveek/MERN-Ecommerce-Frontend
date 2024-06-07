@@ -89,7 +89,7 @@ export default function AdminOrder() {
                 <thead>
                   <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                     <th
-                      className="py-3 px-6 text-left"
+                      className="py-3 px-3 text-left"
                       onClick={(e) =>
                         handleSort({
                           sort: "id",
@@ -104,9 +104,9 @@ export default function AdminOrder() {
                         <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
                       )}
                     </th>
-                    <th className="py-3 px-6 text-left">Items</th>
+                    <th className="py-3 px-3 text-left">Items</th>
                     <th
-                      className="py-3 px-6 text-center"
+                      className="py-3 px-3 text-center"
                       onClick={(e) =>
                         handleSort({
                           sort: "totalAmount",
@@ -121,46 +121,82 @@ export default function AdminOrder() {
                         <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
                       )}
                     </th>
-                    <th className="py-3 px-6 text-center">Shipping Address</th>
-                    <th className="py-3 px-6 text-center">Order Status</th>
-                    <th className="py-3 px-6 text-center">Payment</th>
-                    <th className="py-3 px-6 text-center">Payment Status</th>
-                    <th className="py-3 px-6 text-center">Actions</th>
+                    <th className="py-3 px-3 text-center">Shipping Address</th>
+                    <th className="py-3 px-3 text-center">Order Status</th>
+                    <th className="py-3 px-3 text-center">Payment</th>
+                    <th className="py-3 px-3 text-center">Payment Status</th>
+                    <th
+                      className="py-3 px-3 text-center"
+                      onClick={(e) =>
+                        handleSort({
+                          sort: "createdAt",
+                          order: sort._order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      Order Time#
+                      {sort._sort === "createdAt" && sort._order === "asc" ? (
+                        <ArrowUpIcon className="w-4 h-4 inline"></ArrowUpIcon>
+                      ) : (
+                        <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
+                      )}
+                    </th>
+                    <th
+                      className="py-3 px-3 text-center"
+                      onClick={(e) =>
+                        handleSort({
+                          sort: "updatedAt",
+                          order: sort._order === "asc" ? "desc" : "asc",
+                        })
+                      }
+                    >
+                      Last Update Time#
+                      {sort._sort === "updatedAt" && sort._order === "asc" ? (
+                        <ArrowUpIcon className="w-4 h-4 inline"></ArrowUpIcon>
+                      ) : (
+                        <ArrowDownIcon className="w-4 h-4 inline"></ArrowDownIcon>
+                      )}
+                    </th>
+                    <th className="py-3 px-3 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="text-gray-600 text-sm font-light">
                   {orders?.map((order) => (
                     <tr className="border-b border-gray-200 hover:bg-gray-100">
-                      <td className="py-3 px-6 text-left whitespace-nowrap">
+                      <td className="py-3 px-3 text-left whitespace-nowrap">
                         <div className="flex items-center">
                           <span className="font-medium">{order.id}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-6 text-left">
+                      <td className="py-3 px-3 text-left">
                         {order.items.map((item) => {
                           return (
-                            <div className="flex items-center">
+                            <div
+                              className="flex items-center"
+                              key={item.product.id}
+                            >
                               <div className="mr-2">
                                 <img
-                                  className="w-16 h-16 rounded-xl"
+                                  className="w-10 h-10 rounded-xl"
                                   src={item.product.thumbnail}
                                   alt={item.product.title}
                                 />
                               </div>
                               <span>
-                                {item.product.title} -{item.quantity} -
+                                {item.product.title} - {item.quantity} - $
                                 {discountPercentage(item.product)}
                               </span>
                             </div>
                           );
                         })}
                       </td>
-                      <td className="py-3 px-6 text-center">
+
+                      <td className="py-3 px-3 text-center">
                         <div className="flex items-center justify-center text-md font-semibold">
                           {order.totalAmount}
                         </div>
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-3 text-center">
                         <div className=" items-center justify-center text-md font-semibold">
                           <div>
                             <strong>{order.selectedAddress.name}</strong>
@@ -172,7 +208,7 @@ export default function AdminOrder() {
                           <div>{order.selectedAddress.pinCode}</div>
                         </div>
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-3 text-center">
                         {order.id === editableOrderId ? (
                           <select onChange={(e) => handleOrderStatus(e, order)}>
                             <option value="pending">Pending</option>
@@ -190,12 +226,12 @@ export default function AdminOrder() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-3 text-center">
                         <div className="flex items-center justify-center text-md font-semibold">
                           {order.paymentMethod}
                         </div>
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-3 text-center">
                         {order.id === editableOrderId &&
                         order.paymentMethod === "cash" ? (
                           <select
@@ -214,7 +250,21 @@ export default function AdminOrder() {
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center text-md font-semibold">
+                          {order.createdAt
+                            ? new Date(order.createdAt).toLocaleString()
+                            : null}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <div className="flex items-center justify-center text-md font-semibold">
+                          {order.updatedAt
+                            ? new Date(order.updatedAt).toLocaleString()
+                            : null}{" "}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-center">
                         <div className="flex item-center justify-center">
                           <div className="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
                             <EyeIcon

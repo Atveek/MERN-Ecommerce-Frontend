@@ -106,3 +106,13 @@ exports.resetPassword = async (req, res) => {
     res.sendStatus(401);
   }
 };
+
+exports.logout = async (req, res) => {
+  console.log("logout");
+  res
+    .cookie("jwt", null, {
+      expires: new Date(Date.now() + 10),
+      httpOnly: true,
+    })
+    .sendStatus(200);
+};
