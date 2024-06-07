@@ -1,6 +1,6 @@
 ---
 
-# eKart E-commerce Site <a href="https://mern-ekart-project.vercel.app/" target="_blank">eKart Link</a>
+# eKart E-commerce Site [eKart Link](https://mern-ekart-project.vercel.app/)
 
 eKart is a full-stack e-commerce web application built using Node.js with Express.js for the backend and React.js for the frontend.
 
