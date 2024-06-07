@@ -30,7 +30,6 @@ const {
 } = require("./services/authservecies");
 const { Order } = require("./model/Order");
 
-
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.ENDPOINT_URL;
@@ -46,7 +45,7 @@ server.use((req, res, next) => {
     express.json()(req, res, next);
   }
 });
-server.use(express.static(path.resolve(__dirname, "build")));
+server.use(express.static(path.resolve(__dirname, "../frontend/build")));
 server.use(cookieParser());
 server.use(
   session({
