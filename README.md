@@ -4,6 +4,12 @@
 
 eKart is a full-stack e-commerce web application built using Node.js with Express.js for the backend and React.js for the frontend.
 
+## Demo account for the login:
+```
+email - atveekdungarani2021@gmail.com
+password - Demo@012
+```
+
 ## Table of Contents
 
 - [Features](#features)
