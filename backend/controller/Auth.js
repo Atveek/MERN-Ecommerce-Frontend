@@ -64,7 +64,10 @@ exports.resetPasswordRequest = async (req, res) => {
     user.resetPasswordToken = token;
     await user.save();
     const resetPageLink =
-      "http://localhost:3000/reset-password?token=" + token + "&email=" + email;
+      "https://mern-ekart-project.vercel.app/reset-password?token=" +
+      token +
+      "&email=" +
+      email;
     const subject = "Reset password for e-commerce";
     const html = `<p>Click <a href='${resetPageLink}'>here</a> to Reset Password<p>`;
 
